@@ -2,9 +2,12 @@
 
 __all__ = ["index", "modules", "custom_doc_links", "git_url"]
 
-index = {"importPDFs": "00_pdf_core.ipynb"}
+index = {"AlreadyImportedError": "00_core.ipynb",
+         "InvalidFilePath": "00_core.ipynb",
+         "InvalidFileExtension": "00_core.ipynb",
+         "Pdf": "00_core.ipynb"}
 
-modules = ["pdf_core.py"]
+modules = ["core.py"]
 
 doc_url = "https://fabraz.github.io/fastagger/"
 
