@@ -6,7 +6,7 @@ jobs:
     steps:
     - name: Install Popper
       run: |
-        apt-get install libpoppler-dev  
+        sudo apt-get install libpoppler-dev  
     - uses: actions/checkout@v1
     - uses: actions/setup-python@v1
       with:
