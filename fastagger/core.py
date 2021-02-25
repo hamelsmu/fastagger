@@ -18,13 +18,72 @@ class InvalidFileExtension(Exception):
     pass
 
 class Pdf:
+    """Entity that deals with pdf
+    """
     def __init__(self, path):
-        if checkPath(path) != 'file':
-            raise InvalidFilePath('Invalid file path', self.path)
-        if path.endswith('.pdf'):
-            raise InvalidFileExtension('File must be pdf', self.path)
-            self.path = path
-            self.name = os.path.basename(self.path)
+        if self.checkPath(path) != 'file':
+            raise InvalidFilePath('Invalid file path', path)
+        if not path.endswith('.pdf'):
+            raise InvalidFileExtension('File must be pdf', path)
+        self.path = path
+        self.name = os.path.basename(self.path)
+        self.steamName = os.path.splitext(self.name)[0]
+
+    def load(self, outputFolder, dpi=200, grayscale=True, size=(600, 846)):
+        """Imports pdf pages to folder
+        outputFolder: pages image folder destiny
+        dpi: image quality, default 200
+        grayscale: filter to grayscale, default True
+        size: page image size, default (600, 846)
+        """
+
+        outputFolder = outputFolder +'/'+ self.steamName
+
+        if os.path.exists(outputFolder):
+            raise AlreadyImportedError('Pdf already imported: ',self.path)
+        metadata = {self.steamName: {}}
+        try:
+            pages = convert_from_path(self.path, dpi=200, grayscale=True, size=(600, 846))
+        except:
+            raise Exception("Could not convert from path: ", self.path)
+
+        metadata[self.steamName]['path'] = outputFolder
+        metadata[self.steamName]['pages'] = dict([(x,0) for x in range(1,len(pages)+1)])
+
+        try:
+            os.mkdir(outputFolder)
+        except OSError:
+            raise Exception("Could not create folder: ", outputFolder)
+
+        for idx, page in enumerate(pages):
+            try:
+                page.save(outputFolder+'/'+str(self.steamName)+'_'+str(idx+1)+'.png', 'PNG')
+            except OSError:
+                raise Exception("Could not save file:", outputFolder+'/'+self.steamName+'_'+str(idx+1)+'.png')
+        return metadata
+
+    def bulkLoad(path, outputFolder, dpi=200, grayscale=True, size=(600, 846)):
+        """imports pdf pages to folder
+        path: string path for the file or folder
+        recursive: boolean choice for traversing the path folder searching for pdf files
+        outputFolder: pages image folder destiny
+        dpi: image quality, default 200
+        grayscale: filter to grayscale, default True
+        size: page image size, default (600, 846)
+        """
+        filesMetadata = {}
+        if Pdf.checkPath(path) == 'folder':
+            for root, d_names, f_names in os.walk(path):
+                for f in f_names:
+                    try:
+                        pdf = Pdf(os.path.join(root, f))
+                        metadata = pdf.load(outputFolder, dpi, grayscale, size)
+                        filesMetadata.update(metadata)
+                    except Exception as e:
+                        continue
+            return filesMetadata
+        else:
+            raise Exception('Invalid folder')
 
     @staticmethod
     def checkPath(path):
@@ -34,54 +93,3 @@ class Pdf:
             return "file"
         else:
             return None
-
-    def load(outputFolder, dpi=200, grayscale=True, size=(600, 846)):
-        """Imports pdf pages to folder
-        outputFolder: pages image folder destiny
-        dpi: image quality, default 200
-        grayscale: filter to grayscale, default True
-        size: page image size, default (600, 846)
-        """
-        nameWithoutExt = self.name[0]
-        outputFolder = outputFolder + self.name
-        if os.path.exists(outputFolder):
-            raise AlreadyImportedError('Pdf already imported: ',fileName)
-        metadata = {self.name: {}}
-        try:
-            pages = convert_from_path(filePath, dpi=200, grayscale=True, size=(600, 846))
-        except:
-            raise Exception("Could not convert from path: ", self.path)
-
-        metadata[self.name]['path'] = outputFolder
-        metadata[self.name]['pages'] = dict([(x,0) for x in range(1,len(pages)+1)])
-
-        try:
-            os.mkdir(outputFolder)
-        except OSError:
-            raise Exception("Could not create folder: ", outputFolder)
-
-        for idx, page in enumerate(pages):
-            try:
-                page.save(outputFolder+'/'+nameWithoutExt+'_'+str(idx+1)+'.png', 'PNG')
-            except OSError:
-                raise Exception("Could not save file:", outputFolder+'/'+nameWithoutExt+'_'+str(idx+1)+'.png')
-        return metadata
-
-    @staticmethod
-    def load(path, outputFolder, dpi=200, grayscale=True, size=(600, 846)):
-        """imports pdf pages to folder
-        path: string path for the file or folder
-        recursive: boolean choice for traversing the path folder searching for pdf files
-        outputFolder: pages image folder destiny
-        dpi: image quality, default 200
-        grayscale: filter to grayscale, default True
-        size: page image size, default (600, 846)
-        """
-        if checkPath(path) == 'folder':
-            for root, d_names, f_names in os.walk(path):
-                for f in f_names:
-                    try:
-                        pdf = Pdf(os.path.join(root, f))
-                    except Exception as e:
-                        print(e)
-                        continue
