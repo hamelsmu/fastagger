@@ -4,6 +4,7 @@ __all__ = ["index", "modules", "custom_doc_links", "git_url"]
 
 index = {"AlreadyImportedError": "00_core.ipynb",
          "InvalidFilePath": "00_core.ipynb",
+         "InvalidFolderPath": "00_core.ipynb",
          "InvalidFileExtension": "00_core.ipynb",
          "Pdf": "00_core.ipynb"}
 

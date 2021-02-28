@@ -10,8 +10,8 @@ entries:
       title: Overview
       url: /
     - output: web,pdf
-      title: Pdf Core
-      url: pdf_core.html
+      title: Core
+      url: core.html
     output: web
     title: fastagger
   output: web

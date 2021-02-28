@@ -2,7 +2,10 @@
 > The fastagger gives tools for speeding up class labeling process of pdf pages
 
 
-This file will become your README and also the index of your documentation.
+```python
+%load_ext autoreload
+%autoreload 2
+```
 
 ## Install
 
@@ -13,21 +16,6 @@ This file will become your README and also the index of your documentation.
 Import some pdf image pages to destiny folder
 
 ```python
-importPDF('./file1.pdf', './')
-```
-
-
-    ---------------------------------------------------------------------------
-
-    NameError                                 Traceback (most recent call last)
-
-    <ipython-input-1-c8117f8e28f8> in <module>
-    ----> 1 importPDF('./file1.pdf', './')
-    
-
-    NameError: name 'importPDF' is not defined
-
-
-```python
-importPDFs('./mypdfs', './mypdfs/images')
+APP_ROOT = os.path.dirname(os.path.realpath('__file__'))
+p = Pdf(APP_ROOT+'/resources/pdfs/01.pdf')
 ```
