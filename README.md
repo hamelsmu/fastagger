@@ -1,11 +1,6 @@
 # Fastagger
-> The fastagger gives tools for speeding up class labeling process of pdf pages
+> The fastagger gives tools for speeding up class labeling of stream segmentation data
 
-
-```python
-%load_ext autoreload
-%autoreload 2
-```
 
 ## Install
 
